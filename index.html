@@ -1,0 +1,738 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dublin A.I. Automations</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #070b10;
+      color: #ffffff;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(57,255,20,0.15), transparent 30%),
+        radial-gradient(circle at 80% 25%, rgba(0,255,170,0.10), transparent 30%),
+        radial-gradient(circle at 50% 80%, rgba(57,255,20,0.08), transparent 35%),
+        linear-gradient(180deg, #070b10 0%, #0b1017 100%);
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.2));
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(7, 11, 16, 0.82);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav {
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(57,255,20,0.18);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-text strong {
+      font-size: 1.05rem;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-text span {
+      color: #9ab0c7;
+      font-size: 0.85rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: #dfe8f1;
+      font-size: 0.95rem;
+      transition: 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #39ff14;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      transition: 0.25s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #39ff14, #9bff4f);
+      color: #09100a;
+      box-shadow: 0 12px 30px rgba(57,255,20,0.22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(57,255,20,0.28);
+    }
+
+    .btn-secondary {
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #ffffff;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .btn-secondary:hover {
+      border-color: rgba(57,255,20,0.45);
+      background: rgba(57,255,20,0.08);
+    }
+
+    .hero {
+      padding: 90px 0 70px;
+    }
+
+    .hero-wrap {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 46px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 1px solid rgba(57,255,20,0.25);
+      border-radius: 999px;
+      color: #baffac;
+      background: rgba(57,255,20,0.07);
+      margin-bottom: 22px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 6vw, 5.1rem);
+      line-height: 1.05;
+      margin-bottom: 22px;
+      letter-spacing: -1.5px;
+    }
+
+    .hero h1 .accent {
+      color: #39ff14;
+      text-shadow: 0 0 18px rgba(57,255,20,0.22);
+    }
+
+    .hero p {
+      color: #ccdae8;
+      max-width: 680px;
+      font-size: 1.08rem;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 30px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .stat h3 {
+      font-size: 1.7rem;
+      color: #39ff14;
+      margin-bottom: 4px;
+    }
+
+    .stat p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: #b8c8d7;
+    }
+
+    .hero-card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(57,255,20,0.25), transparent 65%);
+      top: -60px;
+      right: -60px;
+      border-radius: 50%;
+    }
+
+    .hero-card img {
+      width: 100%;
+      max-width: 340px;
+      display: block;
+      margin: 0 auto 22px;
+      filter: drop-shadow(0 0 24px rgba(57,255,20,0.14));
+    }
+
+    .mini-boxes {
+      display: grid;
+      gap: 14px;
+    }
+
+    .mini-box {
+      background: rgba(8, 13, 19, 0.86);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px 16px;
+    }
+
+    .mini-box strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    .mini-box span {
+      color: #9bb2c6;
+      font-size: 0.92rem;
+    }
+
+    section {
+      padding: 80px 0;
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 46px;
+    }
+
+    .section-head h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 .accent {
+      color: #39ff14;
+    }
+
+    .section-head p {
+      color: #bed0de;
+      font-size: 1.03rem;
+    }
+
+    .cards-3,
+    .cards-4 {
+      display: grid;
+      gap: 22px;
+    }
+
+    .cards-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cards-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 28px;
+      transition: 0.25s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(57,255,20,0.24);
+      box-shadow: 0 22px 45px rgba(0,0,0,0.24);
+    }
+
+    .icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 18px;
+      font-size: 1.35rem;
+      background: rgba(57,255,20,0.09);
+      border: 1px solid rgba(57,255,20,0.2);
+      color: #39ff14;
+    }
+
+    .card small {
+      display: inline-block;
+      color: #8aff67;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #b8cad9;
+      font-size: 0.98rem;
+    }
+
+    .process-card {
+      text-align: center;
+    }
+
+    .process-card .icon {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .process-card h3 {
+      margin-top: 4px;
+    }
+
+    .use-cases .card h3 {
+      font-size: 1.18rem;
+    }
+
+    .cta {
+      padding: 90px 0;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, rgba(57,255,20,0.12), rgba(255,255,255,0.04));
+      border: 1px solid rgba(57,255,20,0.18);
+      border-radius: 30px;
+      padding: 46px 28px;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.28);
+    }
+
+    .cta-box h2 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      margin-bottom: 16px;
+    }
+
+    .cta-box p {
+      max-width: 700px;
+      margin: 0 auto 28px;
+      color: #d0dce7;
+      font-size: 1.05rem;
+    }
+
+    footer {
+      padding: 30px 0 50px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .footer-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-wrap p,
+    .footer-wrap a {
+      color: #9ab0c7;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 980px) {
+      .hero-wrap,
+      .cards-3,
+      .cards-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 70px;
+      }
+
+      .hero-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .brand-text span {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(94%, 1120px);
+      }
+
+      header {
+        padding: 0;
+      }
+
+      .nav {
+        min-height: 74px;
+      }
+
+      .brand img {
+        width: 46px;
+        height: 46px;
+      }
+
+      .hero p,
+      .section-head p,
+      .cta-box p {
+        font-size: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="grid-overlay"></div>
+
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <img src="logo.png" alt="Dublin A.I. Automations Logo" />
+        <div class="brand-text">
+          <strong>Dublin A.I. Automations</strong>
+          <span>AI systems built for business growth</span>
+        </div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#process">How It Works</a>
+        <a href="#use-cases">Use Cases</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-wrap">
+        <div>
+          <div class="eyebrow">Done-for-you AI automation agency</div>
+          <h1>
+            We build <span class="accent">AI and automation</span> systems
+            that save your business time and increase revenue.
+          </h1>
+          <p>
+            Dublin A.I. Automations helps businesses eliminate repetitive work,
+            capture more leads, automate customer communication, and streamline
+            operations with custom AI solutions.
+          </p>
+
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">Book Free Consultation</a>
+            <a href="#services" class="btn btn-secondary">See Services</a>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <h3>24/7</h3>
+              <p>AI support and lead response coverage</p>
+            </div>
+            <div class="stat">
+              <h3>10x</h3>
+              <p>Faster handling of repetitive tasks</p>
+            </div>
+            <div class="stat">
+              <h3>Custom</h3>
+              <p>Built around your exact workflow and tools</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <img src="logo.png" alt="Dublin AI Logo Large" />
+          <div class="mini-boxes">
+            <div class="mini-box">
+              <strong>AI Chatbots</strong>
+              <span>Automate customer questions, quotes, and lead capture.</span>
+            </div>
+            <div class="mini-box">
+              <strong>Workflow Automation</strong>
+              <span>Connect your apps and remove manual admin work.</span>
+            </div>
+            <div class="mini-box">
+              <strong>Sales Systems</strong>
+              <span>Follow up with leads automatically and never miss money.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <div class="section-head">
+          <h2>Our <span class="accent">AI automation</span> services</h2>
+          <p>
+            We design, build, and manage practical systems that make small and
+            growing businesses run smarter.
+          </p>
+        </div>
+
+        <div class="cards-4">
+          <div class="card">
+            <div class="icon">🤖</div>
+            <h3>AI Chatbots</h3>
+            <p>
+              Website and customer service chatbots that answer questions,
+              capture leads, and qualify prospects automatically.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">⚙️</div>
+            <h3>Workflow Automation</h3>
+            <p>
+              Automate repetitive processes between forms, CRMs, email tools,
+              spreadsheets, and internal systems.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">📈</div>
+            <h3>Sales Automation</h3>
+            <p>
+              Create automated lead follow-up systems, reminders, pipelines,
+              and CRM updates that help close more deals.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">📬</div>
+            <h3>Email & SMS Systems</h3>
+            <p>
+              Send instant replies, appointment reminders, nurture campaigns,
+              and personalized follow-ups without manual work.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="process">
+      <div class="container">
+        <div class="section-head">
+          <h2>How our <span class="accent">agency works</span></h2>
+          <p>
+            We keep it simple: audit, build, test, and improve so your business
+            gets real results instead of just flashy tech.
+          </p>
+        </div>
+
+        <div class="cards-4">
+          <div class="card process-card">
+            <div class="icon">1</div>
+            <small>STEP 1</small>
+            <h3>We map your process</h3>
+            <p>
+              We look at your workflow, your team, and your tools to find the
+              biggest time-wasting bottlenecks.
+            </p>
+          </div>
+
+          <div class="card process-card">
+            <div class="icon">2</div>
+            <small>STEP 2</small>
+            <h3>We identify automation wins</h3>
+            <p>
+              We pinpoint the highest-impact opportunities for AI, automation,
+              and smart integrations.
+            </p>
+          </div>
+
+          <div class="card process-card">
+            <div class="icon">3</div>
+            <small>STEP 3</small>
+            <h3>We build and test</h3>
+            <p>
+              We create your system, connect your tools, test everything, and
+              make sure it works in the real world.
+            </p>
+          </div>
+
+          <div class="card process-card">
+            <div class="icon">4</div>
+            <small>STEP 4</small>
+            <h3>We manage and improve</h3>
+            <p>
+              As your business grows, we optimize the automations and keep the
+              system performing at a high level.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="use-cases" class="use-cases">
+      <div class="container">
+        <div class="section-head">
+          <h2>The endless use cases of <span class="accent">AI</span></h2>
+          <p>
+            Our automations can support sales, customer service, operations,
+            scheduling, internal communication, and daily admin work.
+          </p>
+        </div>
+
+        <div class="cards-3">
+          <div class="card">
+            <div class="icon">💼</div>
+            <h3>Sales & lead generation</h3>
+            <p>
+              Capture leads from your site, qualify them, send follow-ups, and
+              route them to the right place instantly.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">🧾</div>
+            <h3>Operations & admin</h3>
+            <p>
+              Reduce manual entry, automate intake forms, generate summaries,
+              and keep back-office work organized.
+            </p>
+          </div>
+
+          <div class="card">
+            <div class="icon">📅</div>
+            <h3>Scheduling & reminders</h3>
+            <p>
+              Book meetings, send reminders, reduce no-shows, and automate
+              confirmations through email or text.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="contact">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Ready to automate your business?</h2>
+          <p>
+            Let’s talk about your workflow, your bottlenecks, and where AI can
+            save you time, reduce costs, and help you grow faster.
+          </p>
+          <a href="mailto:hello@dublinaiautomations.com" class="btn btn-primary">
+            Free Consultation
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-wrap">
+      <p>© 2026 Dublin A.I. Automations. All rights reserved.</p>
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <a href="#services">Services</a>
+        <a href="#process">How It Works</a>
+        <a href="#use-cases">Use Cases</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
